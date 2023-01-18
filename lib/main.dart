@@ -64,33 +64,13 @@ class _BLEProjectPageState extends State<BLEProjectPage> {
   String serviceUUID = '';
   String manuFactureData = '';
   String tp = '';
-  String url1 = 'https://d4ve-r.github.io/FHMap/hit.html?route=d';
+  String url1 = 'https://d4ve-r.github.io/FHMap/';
+  String dropdownValue = 'One';
 
   var _tabScanModeIndex = 1;
   final _scanModeList = ['Low Power', 'Balanced', 'Low Latency'];
 
-  final WebViewController webcontroller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setBackgroundColor(const Color(0x00000000))
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-        },
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {
-          if (url.toLowerCase().contains("google.com") &&
-              url.toLowerCase().contains("status")) {
-            if (url.toLowerCase().contains("notok")) {
-            } else if (url.toLowerCase().contains("ok")) {}
-          }
-        },
-        onWebResourceError: (WebResourceError error) {},
-      ),
-    )
-    ..loadRequest(
-      Uri.parse('https://d4ve-r.github.io/FHMap/'),
-    );
+  final WebViewController webcontroller = WebViewController();
 
   @override
   void initState() {
@@ -111,35 +91,15 @@ class _BLEProjectPageState extends State<BLEProjectPage> {
             )
           ],
         ),
-        body: _currentBody < 3
-            ? PageView(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                    isScanning ? pageBLEScan() : selectScanMode(),
-                    pageBLESelected(),
-                    const CircleRoute(),
-                  ])
-            : WebViewWidget(
-                controller: WebViewController()
-                  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-                  ..setNavigationDelegate(
-                    NavigationDelegate(
-                      onProgress: (int progress) {
-                        // Update loading bar.
-                      },
-                      onPageStarted: (String url) {},
-                      onPageFinished: (String url) {
-                        print('logDistancePathLoss(rssi, 1, 2);');
-                      },
-                      onWebResourceError: (WebResourceError error) {},
-                    ),
-                  )
-                  ..loadRequest(
-                    Uri.parse(
-                        'https://d4ve-r.github.io/FHMap/hit.html?route=de'),
-                  ),
-              ),
+        body: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              isScanning ? pageBLEScan() : selectScanMode(),
+              pageBLESelected(),
+              const CircleRoute(),
+              webview(),
+            ]),
         bottomNavigationBar: BottomBar(
           textStyle: const TextStyle(fontWeight: FontWeight.bold),
           selectedIndex: _currentBody,
@@ -148,8 +108,7 @@ class _BLEProjectPageState extends State<BLEProjectPage> {
               _pageController.jumpToPage(index);
             }
 
-            setState(
-                () => {_currentBody = index, print(_currentBody.toString())});
+            setState(() => {_currentBody = index});
           },
           items: <BottomBarItem>[
             BottomBarItem(
@@ -325,6 +284,75 @@ class _BLEProjectPageState extends State<BLEProjectPage> {
               ),
             ),
           ]),
+        )
+      ],
+    );
+  }
+
+  Widget webview() {
+    return Column(
+      children: [
+        Center(
+          child: DropdownButton<String>(
+            value: dropdownValue,
+            icon: const Icon(Icons.menu),
+            style: const TextStyle(color: Color.fromARGB(255, 232, 9, 9)),
+            underline: Container(
+              height: 2,
+              color: Color.fromARGB(255, 247, 5, 5),
+            ),
+            onChanged: (String? newValue) {
+              setState(() {
+                dropdownValue = newValue!;
+                url1 = 'https://d4ve-r.github.io/FHMap/hit.html?route=d';
+                url1 += newValue;
+                print(url1);
+              });
+            },
+            items: [
+              DropdownMenuItem<String>(
+                value: 'One',
+                child: Text('Gebaude'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'b',
+                child: Text('d'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'e',
+                child: Text('e'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'f',
+                child: Text('f'),
+              ),
+              DropdownMenuItem<String>(
+                value: 'g',
+                child: Text('g'),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: WebViewWidget(
+            controller: WebViewController()
+              ..setJavaScriptMode(JavaScriptMode.unrestricted)
+              ..setNavigationDelegate(
+                NavigationDelegate(
+                  onProgress: (int progress) {
+                    // Update loading bar.
+                  },
+                  onPageStarted: (String url) {},
+                  onPageFinished: (String url) {},
+                  onWebResourceError: (WebResourceError error) {},
+                ),
+              )
+              ..loadRequest(
+                Uri.parse(url1),
+              ),
+          ),
         )
       ],
     );

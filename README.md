@@ -4,16 +4,8 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+a mobile application for Android and iOS that makes use of phones as both a Bluetooth beacons and receivers.
 
-A few resources to get you started if this is your first Flutter project:
+The goal of this application is to provide an accurate distance approximation of a phone with an unknown location in relation to phones configured with a known location expressed in cartesian coordinate (x, y) meters.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-## Demo video
-https://youtube.com/shorts/18ESirUi5Ms?feature=share
+The application uses a Log Distance Path Model to calculate distance from one phone to another using RSSI, which is smoothed using a configured Kalman Filter in one dimension.
